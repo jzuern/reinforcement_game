@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../include/SimulatedDisk.h
+
+../include/defines.h
+
+/home/jannik/Desktop/project_0/src/SimulatedDisk.cpp
+SimulatedDisk.h
+/home/jannik/Desktop/project_0/src/SimulatedDisk.h
+defines.h
+/home/jannik/Desktop/project_0/src/defines.h
+stdio.h
+-
+
+/home/jannik/Desktop/project_0/src/main.cpp
+SFML/Graphics.hpp
+-
+defines.h
+/home/jannik/Desktop/project_0/src/defines.h
+SimulatedDisk.h
+/home/jannik/Desktop/project_0/src/SimulatedDisk.h
+

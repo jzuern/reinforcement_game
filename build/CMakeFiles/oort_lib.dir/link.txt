@@ -1,0 +1,2 @@
+/usr/bin/ar qc liboort_lib.a  CMakeFiles/oort_lib.dir/src/main.cpp.o CMakeFiles/oort_lib.dir/src/SimulatedDisk.cpp.o
+/usr/bin/ranlib liboort_lib.a
