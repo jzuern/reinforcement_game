@@ -1,7 +1,10 @@
-## Codename: Project 0
+# Codename: Project 0
 
-### Ideas:
-- face tracking with neural networks
-- robot game
-- optimization (path planning, ...)
+## Goal
+Balance a ball on a plank with 
+
+
+## Dependencies
+- SFML ($ sudo apt-get install sfml)
+
 
