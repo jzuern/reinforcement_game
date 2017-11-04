@@ -1,19 +1,21 @@
-#ifndef SIMULATEDDISK_H
-#define SIMULATEDDISK_H
+#ifndef CONTROLLERDISK_H
+#define CONTROLLERDISK_H
 
+#include "defines.h"
 
-class SimulatedDisk
+class ControllerDisk
 {
 	public:
-		SimulatedDisk(float mass, float radius, float x, float y); 
+		ControllerDisk(float radius, float x, float y); 
 		void updatePosition();
-		void setVelocity(float x_vel, float y_vel);
 		void setPosition(float x, float y);
+		void setVelocity(float x_vel, float y_vel);
 		float getPositionX();
 		float getPositionY();
+		void move(int direction);
 		float getVelX();
 		float getVelY();
-		
+
 	private:
 		float mass_;
 		float radius_;
@@ -22,6 +24,7 @@ class SimulatedDisk
 		float centerPositionY;
 		float linear_velocity_y;
 		float linear_velocity_x;
+
 };
 
 

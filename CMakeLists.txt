@@ -7,6 +7,7 @@ add_definitions(-std=c++11 -Wall -Werror)
 set( project_sources
    src/main.cpp
    src/SimulatedDisk.cpp
+   src/ControllerDisk.cpp
 )
 
 include_directories(include)

@@ -1,8 +1,9 @@
 #include <SFML/Graphics.hpp>
 #include "defines.h"
+#include "geometry.h"
 
 #include "SimulatedDisk.h"
-
+#include "ControllerDisk.h"
 
 int main(int argc, char **argv)
 {
@@ -11,40 +12,67 @@ int main(int argc, char **argv)
     sf::RenderWindow window(sf::VideoMode(WINSIZEX, WINSIZEY), "Project 0 Simulator");
 
 
-    float diskRadius = 100.0;
-    float diskMass = 10.0;
+    float simDiskRadius = 100.0;
+    float simDiskMass = 10.0;
 
-    SimulatedDisk simDisk(diskMass,diskRadius);
+    float controllerDiskRadius = 50.0;
 
-    sf::CircleShape drawDisk(diskRadius);
+    SimulatedDisk simDisk(simDiskMass, simDiskRadius, 100., 100.);
+    ControllerDisk controllerDisk(controllerDiskRadius, WINSIZEY-controllerDiskRadius, WINSIZEX/2);
+
+    sf::CircleShape drawDiskSim(simDiskRadius);
+    sf::CircleShape drawDiskController(controllerDiskRadius);
 
     // set the origin of the drawDisk
-    drawDisk.setOrigin(diskRadius, diskRadius);
+    drawDiskSim.setOrigin(simDiskRadius, simDiskRadius);
+    drawDiskSim.setFillColor(sf::Color::Red);
 
-    drawDisk.setFillColor(sf::Color::Red);
+    // set the origin of the controllerDisk
+    drawDiskController.setOrigin(controllerDiskRadius, controllerDiskRadius);
+    drawDiskController.setFillColor(sf::Color::Green);
+
 
     while (window.isOpen())
     {
+
+
+        // reset controller Disk speed
+        controllerDisk.setVelocity(0.0, 0.0);
+
+        // check for keyboard events
+
         sf::Event event;
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
                 window.close();
         }
-
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
         {
-            simDisk.setPosition(100.,100.);
+            controllerDisk.move(1);
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+        {
+            controllerDisk.move(2);
         }
 
-        
+        // update disk positions according to gravity and user input
         simDisk.updatePosition();
+        controllerDisk.updatePosition();
 
 
-        drawDisk.setPosition(simDisk.getPositionX(), simDisk.getPositionY());
+        // detect collisions between disks
+        collisionDetect(simDisk, controllerDisk, controllerDiskRadius, simDiskRadius);
 
+
+        // set new positions of both disks
+        drawDiskSim.setPosition(simDisk.getPositionX(), simDisk.getPositionY());
+        drawDiskController.setPosition(controllerDisk.getPositionX(), controllerDisk.getPositionY());
+
+        // draw and display disks
         window.clear();
-        window.draw(drawDisk);
+        window.draw(drawDiskSim);
+        window.draw(drawDiskController);
         window.display();
     }
 

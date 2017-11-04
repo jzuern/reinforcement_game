@@ -6,9 +6,31 @@
 
 #IncludeRegexTransform: 
 
+../include/ControllerDisk.h
+defines.h
+../include/defines.h
+
 ../include/SimulatedDisk.h
 
 ../include/defines.h
+
+../include/geometry.h
+defines.h
+../include/defines.h
+ControllerDisk.h
+../include/ControllerDisk.h
+SimulatedDisk.h
+../include/SimulatedDisk.h
+math.h
+../include/math.h
+
+/home/jannik/Desktop/project_0/src/ControllerDisk.cpp
+ControllerDisk.h
+/home/jannik/Desktop/project_0/src/ControllerDisk.h
+defines.h
+/home/jannik/Desktop/project_0/src/defines.h
+stdio.h
+-
 
 /home/jannik/Desktop/project_0/src/SimulatedDisk.cpp
 SimulatedDisk.h
@@ -23,6 +45,10 @@ SFML/Graphics.hpp
 -
 defines.h
 /home/jannik/Desktop/project_0/src/defines.h
+geometry.h
+/home/jannik/Desktop/project_0/src/geometry.h
 SimulatedDisk.h
 /home/jannik/Desktop/project_0/src/SimulatedDisk.h
+ControllerDisk.h
+/home/jannik/Desktop/project_0/src/ControllerDisk.h
 

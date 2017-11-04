@@ -5,20 +5,19 @@
 
 
 
-SimulatedDisk::SimulatedDisk(float mass, float radius)
+SimulatedDisk::SimulatedDisk(float mass, float radius, float x, float y)
 {
 	mass_ = mass;
 	radius_ = radius;
 	linear_velocity_y = 0.;
 	linear_velocity_x = 50.;
-	centerPositionX = 100.;
-	centerPositionY = 100.;
+	centerPositionX = x;
+	centerPositionY = y;
 
 }
 
 void SimulatedDisk::updatePosition()
 {
-	float delta_t = 0.01;
 	float delta_velocity_y = gravity * delta_t;
 	linear_velocity_y += delta_velocity_y;
 
@@ -31,11 +30,6 @@ void SimulatedDisk::updatePosition()
 
 	centerPositionY += delta_pos_y;
 	centerPositionX += delta_pos_x;
-
-
-
-	printf("Center position: x = %f, y = %f. v_y = %f\n", 
-		centerPositionX, centerPositionY, linear_velocity_y);
 
 	if(centerPositionY+radius_ > WINSIZEY)
 	{
@@ -69,6 +63,12 @@ void SimulatedDisk::setPosition(float x, float y)
 	centerPositionY = y;
 }
 
+void SimulatedDisk::setVelocity(float x_vel, float y_vel)
+{
+	linear_velocity_x = x_vel;
+	linear_velocity_y = y_vel;
+}
+
 float SimulatedDisk::getPositionX()
 {
 	return centerPositionX;
@@ -79,11 +79,12 @@ float SimulatedDisk::getPositionY()
 	return centerPositionY;
 }
 
-	// private:
-	// 	const float mass_;
-	// 	const float radius_;
+float SimulatedDisk::getVelX()
+{
+	return linear_velocity_x;
+}
 
-	// 	float centerPositionX;
-	// 	float centerPositionY;
-	// 	// float angular_velocity;
-
+float SimulatedDisk::getVelY()
+{
+	return linear_velocity_y;
+}
