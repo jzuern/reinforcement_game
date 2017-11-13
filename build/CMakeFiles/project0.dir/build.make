@@ -105,42 +105,42 @@ CMakeFiles/project0.dir/src/SimulatedDisk.cpp.o.provides: CMakeFiles/project0.di
 CMakeFiles/project0.dir/src/SimulatedDisk.cpp.o.provides.build: CMakeFiles/project0.dir/src/SimulatedDisk.cpp.o
 
 
-CMakeFiles/project0.dir/src/ControllerDisk.cpp.o: CMakeFiles/project0.dir/flags.make
-CMakeFiles/project0.dir/src/ControllerDisk.cpp.o: ../src/ControllerDisk.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jannik/Desktop/project_0/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/project0.dir/src/ControllerDisk.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/project0.dir/src/ControllerDisk.cpp.o -c /home/jannik/Desktop/project_0/src/ControllerDisk.cpp
+CMakeFiles/project0.dir/src/Controller.cpp.o: CMakeFiles/project0.dir/flags.make
+CMakeFiles/project0.dir/src/Controller.cpp.o: ../src/Controller.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jannik/Desktop/project_0/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/project0.dir/src/Controller.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/project0.dir/src/Controller.cpp.o -c /home/jannik/Desktop/project_0/src/Controller.cpp
 
-CMakeFiles/project0.dir/src/ControllerDisk.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/project0.dir/src/ControllerDisk.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jannik/Desktop/project_0/src/ControllerDisk.cpp > CMakeFiles/project0.dir/src/ControllerDisk.cpp.i
+CMakeFiles/project0.dir/src/Controller.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/project0.dir/src/Controller.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jannik/Desktop/project_0/src/Controller.cpp > CMakeFiles/project0.dir/src/Controller.cpp.i
 
-CMakeFiles/project0.dir/src/ControllerDisk.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/project0.dir/src/ControllerDisk.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jannik/Desktop/project_0/src/ControllerDisk.cpp -o CMakeFiles/project0.dir/src/ControllerDisk.cpp.s
+CMakeFiles/project0.dir/src/Controller.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/project0.dir/src/Controller.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jannik/Desktop/project_0/src/Controller.cpp -o CMakeFiles/project0.dir/src/Controller.cpp.s
 
-CMakeFiles/project0.dir/src/ControllerDisk.cpp.o.requires:
+CMakeFiles/project0.dir/src/Controller.cpp.o.requires:
 
-.PHONY : CMakeFiles/project0.dir/src/ControllerDisk.cpp.o.requires
+.PHONY : CMakeFiles/project0.dir/src/Controller.cpp.o.requires
 
-CMakeFiles/project0.dir/src/ControllerDisk.cpp.o.provides: CMakeFiles/project0.dir/src/ControllerDisk.cpp.o.requires
-	$(MAKE) -f CMakeFiles/project0.dir/build.make CMakeFiles/project0.dir/src/ControllerDisk.cpp.o.provides.build
-.PHONY : CMakeFiles/project0.dir/src/ControllerDisk.cpp.o.provides
+CMakeFiles/project0.dir/src/Controller.cpp.o.provides: CMakeFiles/project0.dir/src/Controller.cpp.o.requires
+	$(MAKE) -f CMakeFiles/project0.dir/build.make CMakeFiles/project0.dir/src/Controller.cpp.o.provides.build
+.PHONY : CMakeFiles/project0.dir/src/Controller.cpp.o.provides
 
-CMakeFiles/project0.dir/src/ControllerDisk.cpp.o.provides.build: CMakeFiles/project0.dir/src/ControllerDisk.cpp.o
+CMakeFiles/project0.dir/src/Controller.cpp.o.provides.build: CMakeFiles/project0.dir/src/Controller.cpp.o
 
 
 # Object files for target project0
 project0_OBJECTS = \
 "CMakeFiles/project0.dir/src/main.cpp.o" \
 "CMakeFiles/project0.dir/src/SimulatedDisk.cpp.o" \
-"CMakeFiles/project0.dir/src/ControllerDisk.cpp.o"
+"CMakeFiles/project0.dir/src/Controller.cpp.o"
 
 # External object files for target project0
 project0_EXTERNAL_OBJECTS =
 
 project0: CMakeFiles/project0.dir/src/main.cpp.o
 project0: CMakeFiles/project0.dir/src/SimulatedDisk.cpp.o
-project0: CMakeFiles/project0.dir/src/ControllerDisk.cpp.o
+project0: CMakeFiles/project0.dir/src/Controller.cpp.o
 project0: CMakeFiles/project0.dir/build.make
 project0: /usr/lib/x86_64-linux-gnu/libsfml-network.so
 project0: /usr/lib/x86_64-linux-gnu/libsfml-audio.so
@@ -158,7 +158,7 @@ CMakeFiles/project0.dir/build: project0
 
 CMakeFiles/project0.dir/requires: CMakeFiles/project0.dir/src/main.cpp.o.requires
 CMakeFiles/project0.dir/requires: CMakeFiles/project0.dir/src/SimulatedDisk.cpp.o.requires
-CMakeFiles/project0.dir/requires: CMakeFiles/project0.dir/src/ControllerDisk.cpp.o.requires
+CMakeFiles/project0.dir/requires: CMakeFiles/project0.dir/src/Controller.cpp.o.requires
 
 .PHONY : CMakeFiles/project0.dir/requires
 

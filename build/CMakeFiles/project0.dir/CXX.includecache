@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-../include/ControllerDisk.h
+../include/Controller.h
 defines.h
 ../include/defines.h
 
@@ -17,16 +17,16 @@ defines.h
 ../include/geometry.h
 defines.h
 ../include/defines.h
-ControllerDisk.h
-../include/ControllerDisk.h
+Controller.h
+../include/Controller.h
 SimulatedDisk.h
 ../include/SimulatedDisk.h
 math.h
 ../include/math.h
 
-/home/jannik/Desktop/project_0/src/ControllerDisk.cpp
-ControllerDisk.h
-/home/jannik/Desktop/project_0/src/ControllerDisk.h
+/home/jannik/Desktop/project_0/src/Controller.cpp
+Controller.h
+/home/jannik/Desktop/project_0/src/Controller.h
 defines.h
 /home/jannik/Desktop/project_0/src/defines.h
 stdio.h
@@ -49,6 +49,6 @@ geometry.h
 /home/jannik/Desktop/project_0/src/geometry.h
 SimulatedDisk.h
 /home/jannik/Desktop/project_0/src/SimulatedDisk.h
-ControllerDisk.h
-/home/jannik/Desktop/project_0/src/ControllerDisk.h
+Controller.h
+/home/jannik/Desktop/project_0/src/Controller.h
 

@@ -123,32 +123,32 @@ project0/fast:
 	$(MAKE) -f CMakeFiles/project0.dir/build.make CMakeFiles/project0.dir/build
 .PHONY : project0/fast
 
-src/ControllerDisk.o: src/ControllerDisk.cpp.o
+src/Controller.o: src/Controller.cpp.o
 
-.PHONY : src/ControllerDisk.o
+.PHONY : src/Controller.o
 
 # target to build an object file
-src/ControllerDisk.cpp.o:
-	$(MAKE) -f CMakeFiles/project0.dir/build.make CMakeFiles/project0.dir/src/ControllerDisk.cpp.o
-.PHONY : src/ControllerDisk.cpp.o
+src/Controller.cpp.o:
+	$(MAKE) -f CMakeFiles/project0.dir/build.make CMakeFiles/project0.dir/src/Controller.cpp.o
+.PHONY : src/Controller.cpp.o
 
-src/ControllerDisk.i: src/ControllerDisk.cpp.i
+src/Controller.i: src/Controller.cpp.i
 
-.PHONY : src/ControllerDisk.i
+.PHONY : src/Controller.i
 
 # target to preprocess a source file
-src/ControllerDisk.cpp.i:
-	$(MAKE) -f CMakeFiles/project0.dir/build.make CMakeFiles/project0.dir/src/ControllerDisk.cpp.i
-.PHONY : src/ControllerDisk.cpp.i
+src/Controller.cpp.i:
+	$(MAKE) -f CMakeFiles/project0.dir/build.make CMakeFiles/project0.dir/src/Controller.cpp.i
+.PHONY : src/Controller.cpp.i
 
-src/ControllerDisk.s: src/ControllerDisk.cpp.s
+src/Controller.s: src/Controller.cpp.s
 
-.PHONY : src/ControllerDisk.s
+.PHONY : src/Controller.s
 
 # target to generate assembly for a file
-src/ControllerDisk.cpp.s:
-	$(MAKE) -f CMakeFiles/project0.dir/build.make CMakeFiles/project0.dir/src/ControllerDisk.cpp.s
-.PHONY : src/ControllerDisk.cpp.s
+src/Controller.cpp.s:
+	$(MAKE) -f CMakeFiles/project0.dir/build.make CMakeFiles/project0.dir/src/Controller.cpp.s
+.PHONY : src/Controller.cpp.s
 
 src/SimulatedDisk.o: src/SimulatedDisk.cpp.o
 
@@ -213,9 +213,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... project0"
-	@echo "... src/ControllerDisk.o"
-	@echo "... src/ControllerDisk.i"
-	@echo "... src/ControllerDisk.s"
+	@echo "... src/Controller.o"
+	@echo "... src/Controller.i"
+	@echo "... src/Controller.s"
 	@echo "... src/SimulatedDisk.o"
 	@echo "... src/SimulatedDisk.i"
 	@echo "... src/SimulatedDisk.s"
