@@ -1,70 +1,73 @@
-#include "ControllerDisk.h"
+#include "Controller.h"
 #include "defines.h"
 
 #include <stdio.h>
 
 
 
-ControllerDisk::ControllerDisk(float radius, float x, float y)
+Controller::Controller(float length, float height, float x, float y)
 {
-	radius_ = radius;
+	length_ = length;
+	height_ = height;
+
 	linear_velocity_y = 0.;
 	linear_velocity_x = 0.;
+
 	centerPositionX = x;
 	centerPositionY = y;
 
 }
 
-void ControllerDisk::updatePosition()
+void Controller::updatePosition()
 {
 
 	// check for wall collision
-	if(centerPositionX+radius_ > WINSIZEX)
+	if(centerPositionX+length_/2 > WINSIZEX)
 	{
-		centerPositionX = WINSIZEX - radius_;
+		centerPositionX = WINSIZEX - length_/2;
 	}
 
-	if(centerPositionX-radius_ < 0)
+	if(centerPositionX-length_/2 < 0)
 	{
-		centerPositionX = radius_;
+		centerPositionX = length_/2;
 	}
 
 }
 
-void ControllerDisk::setPosition(float x, float y)
+void Controller::setPosition(float x, float y)
 {
 	centerPositionX = x;
 	centerPositionY = y;
 }
 
-float ControllerDisk::getPositionX()
+float Controller::getPositionX()
 {
 	return centerPositionX;
 }
 
-float ControllerDisk::getPositionY()
+float Controller::getPositionY()
 {
 	return centerPositionY;
 }
 
-float ControllerDisk::getVelX()
+float Controller::getVelX()
 {
 	return linear_velocity_x;
 }
 
-float ControllerDisk::getVelY()
+float Controller::getVelY()
 {
 	return linear_velocity_y;
 }
 
-void ControllerDisk::setVelocity(float x_vel, float y_vel)
+void Controller::setVelocity(float x_vel, float y_vel)
 {
 	linear_velocity_x = x_vel;
 	linear_velocity_y = y_vel;
 }
 
 
-void ControllerDisk::move(int direction)
+void Controller::move(int direction)
 {
 	float centerPositionX_old = centerPositionX;
 
@@ -72,12 +75,12 @@ void ControllerDisk::move(int direction)
 	{
 	    case 1: 
 	    {
-	    	centerPositionX -= 0.5;  // Left
+	    	centerPositionX -= 0.1;  // Left
 	    }
 	    break;
 	    case 2:
 	    {
-	    	centerPositionX += 0.5;  // Right
+	    	centerPositionX += 0.1;  // Right
 	    }
 	    break;
 	}

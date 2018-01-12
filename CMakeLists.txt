@@ -2,17 +2,18 @@ cmake_minimum_required(VERSION 2.6)
 project(project_0)
 
 
-add_definitions(-std=c++11 -Wall -Werror)
+add_definitions(-std=c++11 -Wall)
 
 set( project_sources
    src/main.cpp
    src/SimulatedDisk.cpp
-   src/ControllerDisk.cpp
+   src/Controller.cpp
+   src/PolicyNetwork.cpp
 )
 
 include_directories(include)
 
-
+include_directories(/home/jannik/eigen)
 
 add_executable(project0
 	${project_sources})

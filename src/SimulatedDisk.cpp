@@ -5,12 +5,11 @@
 
 
 
-SimulatedDisk::SimulatedDisk(float mass, float radius, float x, float y)
+SimulatedDisk::SimulatedDisk(float radius, float x, float y, float x_vel)
 {
-	mass_ = mass;
 	radius_ = radius;
 	linear_velocity_y = 0.;
-	linear_velocity_x = 50.;
+	linear_velocity_x = x_vel;
 	centerPositionX = x;
 	centerPositionY = y;
 
@@ -24,35 +23,42 @@ void SimulatedDisk::updatePosition()
 	float delta_velocity_x = 0.0;
 	linear_velocity_x += delta_velocity_x;
 
-
 	float delta_pos_y = linear_velocity_y * delta_t;
 	float delta_pos_x = linear_velocity_x * delta_t;
+
+	float bounce = 1.0;
 
 	centerPositionY += delta_pos_y;
 	centerPositionX += delta_pos_x;
 
 	if(centerPositionY+radius_ > WINSIZEY)
 	{
-		centerPositionY = WINSIZEY - radius_;
-		linear_velocity_y = -0.9*linear_velocity_y;
+		// centerPositionY = WINSIZEY - radius_;
+		// linear_velocity_y = -bounce*linear_velocity_y;
+
+		// if this happens, remove disk from game
+		centerPositionX = -100.;
+		centerPositionY = -100.;
+		linear_velocity_y = 0.;;
+		linear_velocity_y = 0.;
 	}
 
 	if(centerPositionY-radius_ < 0)
 	{
 		centerPositionY = radius_;
-		linear_velocity_y = -0.9*linear_velocity_y;
+		linear_velocity_y = -bounce*linear_velocity_y;
 	}
 
 	if(centerPositionX+radius_ > WINSIZEX)
 	{
 		centerPositionX = WINSIZEX - radius_;
-		linear_velocity_x = -0.9*linear_velocity_x;
+		linear_velocity_x = -bounce*linear_velocity_x;
 	}
 
 	if(centerPositionX-radius_ < 0)
 	{
 		centerPositionX = radius_;
-		linear_velocity_x = -0.9*linear_velocity_x;
+		linear_velocity_x = -bounce*linear_velocity_x;
 	}
 
 }

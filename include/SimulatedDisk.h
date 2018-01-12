@@ -5,7 +5,7 @@
 class SimulatedDisk
 {
 	public:
-		SimulatedDisk(float mass, float radius, float x, float y); 
+		SimulatedDisk(float radius, float x, float y, float x_vel); 
 		void updatePosition();
 		void setVelocity(float x_vel, float y_vel);
 		void setPosition(float x, float y);
@@ -15,7 +15,6 @@ class SimulatedDisk
 		float getVelY();
 		
 	private:
-		float mass_;
 		float radius_;
 
 		float centerPositionX;

@@ -1,12 +1,12 @@
-#ifndef CONTROLLERDISK_H
-#define CONTROLLERDISK_H
+#ifndef CONTROLLER_H
+#define CONTROLLER_H
 
 #include "defines.h"
 
-class ControllerDisk
+class Controller
 {
 	public:
-		ControllerDisk(float radius, float x, float y); 
+		Controller(float length, float height, float x, float y); 
 		void updatePosition();
 		void setPosition(float x, float y);
 		void setVelocity(float x_vel, float y_vel);
@@ -17,8 +17,8 @@ class ControllerDisk
 		float getVelY();
 
 	private:
-		float mass_;
-		float radius_;
+		float length_;
+		float height_;
 
 		float centerPositionX;
 		float centerPositionY;
