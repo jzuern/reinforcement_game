@@ -6,7 +6,7 @@ float sigmoid(float x)
   return 1.0 / (1.0 + exp(-x));
 }
 
-PolicyNetwork::policy_backward(VectorXd eph, VectorXd epdlogp)
+std::pair<Eigen::MatrixXd,Eigen::VectorXd> PolicyNetwork::policy_backward(VectorXd eph, VectorXd epdlogp)
 {
 
   //   """ backward pass. (eph is array of intermediate hidden states) """
@@ -33,7 +33,7 @@ PolicyNetwork::policy_backward(VectorXd eph, VectorXd epdlogp)
 }
 
 
-PolicyNetwork::policy_forward(VectorXd x)
+std::pair<VectorXd,VectorXd> PolicyNetwork::policy_forward(VectorXd x)
 {
   //  h = np.dot(model['W1'], x)
   VectorXd h = x.array() * this.W1.array()
@@ -63,6 +63,8 @@ PolicyNetwork::policy_forward(VectorXd x)
 PolicyNetwork::PolicyNetwork()
 {
   // hyperparameters:
+
+public:
   int nHidden = 200;
   int batch_size = 10;
   float learning_rate = 1e-4;
