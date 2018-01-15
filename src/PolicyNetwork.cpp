@@ -1,12 +1,12 @@
 #include "PolicyNetwork.h"
 #include <math.h> 
 
-float sigmoid(float x)
+double sigmoid(double x)
 {
   return 1.0 / (1.0 + exp(-x));
 }
 
-std::pair<Eigen::MatrixXd,Eigen::VectorXd> PolicyNetwork::policy_backward(VectorXd eph, VectorXd epdlogp)
+std::pair<Eigen::MatrixXd,Eigen::VectorXd> PolicyNetwork::policy_backward(Eigen::VectorXd eph, Eigen::VectorXd epdlogp, Eigen::MatrixXd epx)
 {
 
   //   """ backward pass. (eph is array of intermediate hidden states) """
@@ -14,48 +14,43 @@ std::pair<Eigen::MatrixXd,Eigen::VectorXd> PolicyNetwork::policy_backward(Vector
   Eigen::VectorXd dW2 = eph * epdlogp;
 
   //   dh = np.outer(epdlogp, model['W2'])
-  Eigen::MatrixXd dh = epdlogp*this.W2.transpose();
+  Eigen::MatrixXd dh = epdlogp * W2.transpose();
 
   //   dh[eph <= 0] = 0 # backpro prelu
   for(int i = 0; i < dh.rows(); i++)
   {
     for(int j = 0; j < dh.cols(); i++)
     {
-      dh[i][j] = dh[i][j] < 0.0 ? 0.0:dh[i][j]; // ReLu
+      dh(i,j) = dh(i,j) < 0.0 ? 0.0:dh(i,j); // ReLu
     }
   }
 
   //   dW1 = np.dot(dh.T, epx)
-  Eigen::VectorXd dW2 = dh * epx;  // where do we get epx??
+  Eigen::MatrixXd dW1 = dh * epx;
 
   //   return {'W1':dW1, 'W2':dW2}
-  return std::make_tuple (dW1, dW2); 
+  return std::make_pair (dW1, dW2); 
 }
 
 
-std::pair<VectorXd,VectorXd> PolicyNetwork::policy_forward(VectorXd x)
+std::pair<double,Eigen::VectorXd> PolicyNetwork::policy_forward(Eigen::VectorXd x)
 {
   //  h = np.dot(model['W1'], x)
-  VectorXd h = x.array() * this.W1.array()
+  Eigen::VectorXd h = W1 * x;
 
   // h[h<0] = 0 # ReLU nonlinearity
   for(int i = 0; i < h.size(); i++)
   {
-    h[i] = h[i] < 0.0 ? 0.0:h[i]; // ReLu
+    h(i) = h(i) < 0.0 ? 0.0:h(i); // ReLu
   }
   //   logp = np.dot(model['W2'], h)
-  VectorXd logp = this.W2.array() * h.array();
+  double logp = W2.transpose() * h;
 
   //  p = sigmoid(logp)
-  VectorXd p;
-  for(int i = 0; i < logp.size(); i++)
-  {
-    p[i] = sigmoid(logp[i]);
-  }
-
+  double p = sigmoid(logp);
 
   // return p, h # return probability of taking action 2, and hidden state
-  return std::make_tuple (p, h); 
+  return std::make_pair(p, h); 
 }
 
 
@@ -63,32 +58,28 @@ std::pair<VectorXd,VectorXd> PolicyNetwork::policy_forward(VectorXd x)
 PolicyNetwork::PolicyNetwork()
 {
   // hyperparameters:
-
-public:
   int nHidden = 200;
   int batch_size = 10;
-  float learning_rate = 1e-4;
-  float gamma = 0.99;
-  float decay_rate = 0.99;
-  bool render = false;
-
+  double learning_rate = 1e-4;
+  double gamma = 0.99;
+  double decay_rate = 0.99;
 }
 
 
 void PolicyNetwork::initialize()
 {
   // input dimensionality:
-  int D = 80*80;
+  int D = 20*20;
   int H = 200;
 
   // TODO: add xavier initialization instead of zeros
-  W1 = Eigen::VectorXd::Zero(H,D);
+  W1 = Eigen::MatrixXd::Zero(H,D);
   W2 = Eigen::VectorXd::Zero(H);
 
-  grad_buffer_W1 = Eigen::VectorXd::Zero(H,D);
+  grad_buffer_W1 = Eigen::MatrixXd::Zero(H,D);
   grad_buffer_W2 = Eigen::VectorXd::Zero(H);
 
-  rmsprop_cache_W1 = Eigen::VectorXd::Zero(H,D);
+  rmsprop_cache_W1 = Eigen::MatrixXd::Zero(H,D);
   rmsprop_cache_W2 = Eigen::VectorXd::Zero(H);
 }
 
@@ -96,27 +87,27 @@ Eigen::MatrixXd PolicyNetwork::prepro()
 {
   // TODO: implement actual content
 
-  MatrixXd dummy = Eigen::MatrixXd::Zero(80,80);
-  return dummy
+  Eigen::MatrixXd dummy = Eigen::VectorXd::Zero(20*20);
+  return dummy;
 }
 
 
-Eigen::MatrixXd PolicyNetwork::discount_rewards(MatrixXd r)
+Eigen::VectorXd PolicyNetwork::discount_rewards(Eigen::VectorXd r)
 {
 
-  Eigen::MatrixXd discounted_r = Eigen::MatrixXd::Zero(r.rows(),r.cols());
+  Eigen::VectorXd discounted_r = Eigen::VectorXd::Zero(r.size());
   
-  int running_add = 0;
+  double running_add = 0.0;
 
-  for(i = r.rows(); i >= 0; i--)
+  for(int i = r.size()-1; i >= 0; i--)
   {
-    if (r[i] != 0)
+    if (r(i) != 0.0)
     {
-      running_add = 0;
+      running_add = 0.0;
     }
-    running_add = running_add * gamma + r[i]
-    discounted_r[i] = running_add;
+    running_add = running_add * gamma + r(i);
+    discounted_r(i) = running_add;
   }
 
-  return discounted_r
+  return discounted_r;
 }

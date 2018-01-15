@@ -17,24 +17,36 @@ Eigen::MatrixXd step()
 
 Eigen::MatrixXd stack( std::vector<Eigen::VectorXd> xs)
 {
+    // TODO: implement correct body
     // stacks elements of std::vector<Eigen::VectorXd> to MatrixXd
 
-    double* ptr = &xs[0];
+    // double* ptr = &xs[0];
     int nEntries = xs.size();
     int entries_per_vector = xs[0].rows();
-    Eigen::Map<Eigen::MatrixXd> result(ptr, nEntries*entries_per_vector);
+    // Eigen::Map<Eigen::MatrixXd> result(ptr, nEntries*entries_per_vector);
+
+    Eigen::MatrixXd result = Eigen::MatrixXd::Zero(nEntries,entries_per_vector);
 
     // test MatrixXd content
     for(int i = 0; i < result.rows(); i++)
     {
-        for(int i = 0; i < result.rows(); i++)
+        for(int j = 0; j < result.rows(); j++)
         {
-            printf("matrix entry = %s", result(i,j));
+            printf("matrix entry = %f", result(i,j));
         }
     }
-
     return result;
 }
+
+Eigen::VectorXd stack_vector( std::vector<double> x)
+{
+    double* ptr = &x[0];
+    int size = x.size();
+    Eigen::Map<Eigen::VectorXd> stacked(ptr, size);
+
+    return stacked;
+}
+
 
 
 int main(int argc, char **argv)
@@ -65,7 +77,7 @@ int main(int argc, char **argv)
     drawController.setFillColor(sf::Color::White);
 
     // create RenderWindow object
-    sf::RenderWindow window(sf::VideoMode(WINSIZEX, WINSIZEY), "Project 0 Simulator");
+//    sf::RenderWindow window(sf::VideoMode(WINSIZEX, WINSIZEY), "Project 0 Simulator");
 
 
     // POLICYNETWORK PART
@@ -77,15 +89,16 @@ int main(int argc, char **argv)
 
     Eigen::VectorXd prev_x = Eigen::VectorXd::Zero(D); // used in computing the difference frame
     std::vector<Eigen::VectorXd> xs,hs;
-    std::vector<int> dlogps,drs;
+    std::vector<double> dlogps,drs;
 
-    int running_reward = 0;
+    double running_reward = 0.0;
     int reward_sum = 0;
     int episode_number = 0;
-    int counter = 0;
+    int counter = 1;
 
     // Simulation loop
-    while (window.isOpen())
+//    while (window.isOpen())
+    while (true)
     {
 
         // SIMULATION part
@@ -93,51 +106,53 @@ int main(int argc, char **argv)
 
         // check for keyboard events
 
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-        {
-            controller.move(1);
-        }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-        {
-            controller.move(2);
-        }
+//        sf::Event event;
+//        while (window.pollEvent(event))
+//        {
+//            if (event.type == sf::Event::Closed)
+//                window.close();
+//        }
+//        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+//        {
+//            controller.move(1);
+//        }
+//        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+//        {
+//            controller.move(2);
+//        }
+//
+//        // update disk positions according to gravity and user input
+//        disk1.updatePosition();
+//        disk2.updatePosition();
+//        controller.updatePosition();
+//
+//
+//        // detect collisions between disks and controller
+//        collisionDetect(disk1, controller, diskRadius);
+//        collisionDetect(disk2, controller, diskRadius);
+//
+//
+//        // set new positions of both disks
+//        drawDisk1.setPosition(disk1.getPositionX(), disk1.getPositionY());
+//        drawDisk2.setPosition(disk2.getPositionX(), disk2.getPositionY());
+//        drawController.setPosition(controller.getPositionX(), controller.getPositionY());
+//
+//        // draw and display disks
+//        window.clear();
+//        window.draw(drawDisk1);
+//        window.draw(drawDisk2);
+//        window.draw(drawController);
+//        window.display();
 
-        // update disk positions according to gravity and user input
-        disk1.updatePosition();
-        disk2.updatePosition();
-        controller.updatePosition();
-
-
-        // detect collisions between disks and controller
-        collisionDetect(disk1, controller, diskRadius);
-        collisionDetect(disk2, controller, diskRadius);
-
-
-        // set new positions of both disks
-        drawDisk1.setPosition(disk1.getPositionX(), disk1.getPositionY());
-        drawDisk2.setPosition(disk2.getPositionX(), disk2.getPositionY());
-        drawController.setPosition(controller.getPositionX(), controller.getPositionY());
-
-        // draw and display disks
-        window.clear();
-        window.draw(drawDisk1);
-        window.draw(drawDisk2);
-        window.draw(drawController);
-        window.display();
-
-        auto image = window.capture();
-        auto image_ptr = image.getPixelsPtr();
+        // auto image = window.capture();
+        // auto image_ptr = image.getPixelsPtr();
 
 
         // POLICYNETWORK part
 
-        int D = 80*80;
+        bool done = ((counter % 10 == 0) && (counter > 0));
+
+        int D = 20*20;
         int H = 200;
 
         //   cur_x = prepro()
@@ -152,13 +167,11 @@ int main(int argc, char **argv)
         // aprob, h = policy_forward(x)
         auto aprob_and_h = pn.policy_forward(x);
 
-        auto aprob = aprob_and_h.first;
-        auto h = aprob_and_h.second;
+        double aprob = aprob_and_h.first;
+        Eigen::VectorXd h = aprob_and_h.second;
         
         // action = 2 if np.random.uniform() < aprob else 3 # roll the dice!
         int action = 2; // TODO: replace
-
-        //  record various intermediates (needed later for backprop)
 
         //  xs.append(x) # observation
         xs.push_back(x);
@@ -178,12 +191,12 @@ int main(int argc, char **argv)
         dlogps.push_back(y - aprob);
         //  step the environment and get new measurements
         //  observation, reward, done = step(action,counter)
-        Eigen::MatrixXd observarion = step(action,counter);
+        Eigen::MatrixXd observarion = step(); // TODO: add correct arguments
         
-        done = counter % 10 == 0;
-        float reward = 1.0;
-        //  reward_sum += reward
 
+        double reward = 1.0;
+
+        //  reward_sum += reward
         reward_sum += reward;
         //  drs.append(reward) # record reward (has to be done after we call step() to get reward for previous action)
         drs.push_back(reward);
@@ -197,42 +210,44 @@ int main(int argc, char **argv)
             Eigen::MatrixXd epx = stack(xs);
 
             // eph = np.vstack(hs)
-            Eigen::MatrixXd eph = np.stack(hs);
+            Eigen::MatrixXd eph = stack(hs);
 
             // epdlogp = np.vstack(dlogps)
-            Eigen::MatrixXd epdlogp = np.stack(dlogps);
+            Eigen::VectorXd epdlogp = stack_vector(dlogps);
 
             // epr = np.vstack(drs)
-            Eigen::MatrixXd epr = np.stack(drs);
+            Eigen::VectorXd epr = stack_vector(drs);
 
             // xs,hs,dlogps,drs = [],[],[],[] # reset array memory
             xs.clear();
-            hs.celar();
+            hs.clear();
             dlogps.clear();
             drs.clear();
 
             // # compute the discounted reward backwards through time
-            Eigen::MatrixXd discounted_epr = discount_rewards(epr);
+            Eigen::VectorXd discounted_epr = pn.discount_rewards(epr);
             
             // # standardize the rewards to be unit normal (helps control the gradient estimator variance)
             // discounted_epr -= np.mean(discounted_epr)
             // discounted_epr /= np.std(discounted_epr)
-            discounted_epr -= discounted_epr.mean();
+            double mean = discounted_epr.mean();
+            Eigen::VectorXd discounted_epr_mean = discounted_epr.array() - mean;
             // TODO: add also standard deviation normalization
 
             // epdlogp *= discounted_epr # modulate the gradient with advantage (PG magic happens right here.)
-            epdlogp *= discounted_epr;
+            Eigen::VectorXd epdlogp_discounted = discounted_epr_mean.array() * discounted_epr.array();
+
 
             // grad = policy_backward(eph, epdlogp)
-            auto grad = pn.policy_backward(eph,epdlogp);
+            auto grad = pn.policy_backward(eph,epdlogp_discounted,epx);
 
             // for k in model: grad_buffer[k] += grad[k] # accumulate grad over batch
-            grad_buffer_W1 = grad.first;
-            grad_buffer_W2 = grad.second;
+            pn.grad_buffer_W1 = grad.first;
+            pn.grad_buffer_W2 = grad.second;
 
 
             // perform rmsprop parameter update every batch_size episodes
-            if (episode_number % batch_size == 0)
+            if (episode_number % pn.batch_size == 0)
             {
             //   for k,v in model.iteritems():
             //     g = grad_buffer[k] # gradient
@@ -241,22 +256,22 @@ int main(int argc, char **argv)
             //     grad_buffer[k] = np.zeros_like(v) # reset batch gradient buffer
 
                 // W1:
-                auto g_W1 = grad_buffer_W1;
-                rmsprop_cache_W1 = pn.decay_rate * rmsprop_cache_W1 + (1.0-pn.decay_rate)* g_W1.cwiseProduct(g_W1);
-                pn.W1 = learning_rate * g_W1 / (rmsprop_cache_W1.sqrt() + 1e-5);
-                grad_buffer_W1 = Eigen::VectorXd::Zero(H,D);
+                auto g_W1 = pn.grad_buffer_W1;
+                pn.rmsprop_cache_W1 = pn.decay_rate * pn.rmsprop_cache_W1 + (1.0-pn.decay_rate)* g_W1.cwiseProduct(g_W1);
+                pn.W1 = pn.learning_rate * g_W1.array() / (pn.rmsprop_cache_W1.array().sqrt() + 1e-5);
+                pn.grad_buffer_W1 = Eigen::VectorXd::Zero(H,D);
 
-                // W2:
-                auto g_W2 = grad_buffer_W2;
-                rmsprop_cache_W2 = pn.decay_rate * rmsprop_cache_W2 + (1.0-pn.decay_rate)* g_W2.cwiseProduct(g_W2);
-                pn.W2 = learning_rate * g_W2 / (rmsprop_cache_W2.sqrt() + 1e-5);
-                grad_buffer_W2 = Eigen::VectorXd::Zero(H);
+                // // W2:
+                auto g_W2 = pn.grad_buffer_W2;
+                pn.rmsprop_cache_W2 = pn.decay_rate * pn.rmsprop_cache_W2 + (1.0-pn.decay_rate)* g_W2.cwiseProduct(g_W2);
+                pn.W2 = pn.learning_rate * g_W2.array() / (pn.rmsprop_cache_W2.array().sqrt() + 1e-5);
+                pn.grad_buffer_W2 = Eigen::VectorXd::Zero(H);
             }
 
 
             // boring book-keeping
             // running_reward = reward_sum if running_reward is None else running_reward * 0.99 + reward_sum * 0.01
-            if(running_reward == 0)
+            if(running_reward == 0.0)
             {
                 running_reward = reward_sum;
             }
@@ -264,12 +279,14 @@ int main(int argc, char **argv)
             {
                 running_reward = running_reward * 0.99 + reward_sum * 0.01;
             }
-            printf("resetting env. Episode reward total was %f. Running mean: %f\n", reward_sum, running_reward);
+            printf("resetting env. Episode reward total was %i. Running mean: %f\n", reward_sum, running_reward);
             reward_sum = 0;
 
             // prev_x = None
             prev_x = Eigen::VectorXd::Zero(D);
         }
+        counter += 1;
+
     }
 
     return 0;

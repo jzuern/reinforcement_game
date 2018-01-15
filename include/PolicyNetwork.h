@@ -11,10 +11,17 @@ class PolicyNetwork
 	public:
 		PolicyNetwork(); 
 		void initialize();
-		std::pair<Eigen::MatrixXd,Eigen::VectorXd> policy_backward(Eigen::VectorXd eph, Eigen::VectorXd epdlogp);
-		std::pair<Eigen::VectorXd,Eigen::VectorXd> policy_forward(Eigen::VectorXd x);
+		
+		std::pair<Eigen::MatrixXd,Eigen::VectorXd> policy_backward(Eigen::VectorXd eph, 
+				Eigen::VectorXd epdlogp, Eigen::MatrixXd epx);
+		
+		std::pair<double,Eigen::VectorXd> policy_forward(Eigen::VectorXd x);
+		
 		Eigen::MatrixXd prepro();
-		Eigen::MatrixXd discount_rewards(Eigen::MatrixXd r);
+		
+		Eigen::VectorXd discount_rewards(Eigen::VectorXd r);
+
+
 
 
 		Eigen::MatrixXd W1;
@@ -25,6 +32,14 @@ class PolicyNetwork
 
 		Eigen::MatrixXd rmsprop_cache_W1;
 		Eigen::VectorXd rmsprop_cache_W2;
+
+		// network parameters
+		int nHidden;
+		int batch_size;
+		double learning_rate;
+		double gamma;
+		double decay_rate;
+		bool render;
 };
 
 

@@ -49,6 +49,13 @@ def policy_backward(eph, epdlogp):
   dh = np.outer(epdlogp, model['W2'])
   dh[eph <= 0] = 0 # backpro prelu
   dW1 = np.dot(dh.T, epx)
+
+  print 'dh.T shape = ', dh.T.shape
+  print 'epx shape = ', epx.shape
+
+  print 'dW1 shape = ', dW1.shape
+  print 'dW2 shape = ', dW2.shape
+
   return {'W1':dW1, 'W2':dW2}
 
 def step(action,counter):
@@ -83,6 +90,10 @@ while True:
   y = 1 if action == 2 else 0 # a "fake label"
   dlogps.append(y - aprob) # grad that encourages the action that was taken to be taken (see http://cs231n.github.io/neural-networks-2/#losses if confused)
 
+  print 'dlogps type = ', type(dlogps)
+  print 'aprob type = ', type(aprob)
+  print 'h shape = ', h.shape
+
   # step the environment and get new measurements
   observation, reward, done = step(action,counter)
   reward_sum += reward
@@ -97,6 +108,12 @@ while True:
     eph = np.vstack(hs)
     epdlogp = np.vstack(dlogps)
     epr = np.vstack(drs)
+
+    print 'epdlogp type = ', type(epdlogp)
+    print 'epdlogp shape = ', epdlogp.shape
+
+
+
     xs,hs,dlogps,drs = [],[],[],[] # reset array memory
 
     # compute the discounted reward backwards through time
