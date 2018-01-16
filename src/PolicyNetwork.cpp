@@ -6,12 +6,12 @@ double sigmoid(double x)
   return 1.0 / (1.0 + exp(-x));
 }
 
-std::pair<Eigen::MatrixXd,Eigen::VectorXd> PolicyNetwork::policy_backward(Eigen::VectorXd eph, Eigen::VectorXd epdlogp, Eigen::MatrixXd epx)
+std::pair<Eigen::MatrixXd,Eigen::VectorXd> PolicyNetwork::policy_backward(Eigen::MatrixXd eph, Eigen::VectorXd epdlogp, Eigen::MatrixXd epx)
 {
 
   //   """ backward pass. (eph is array of intermediate hidden states) """
   //   dW2 = np.dot(eph.T, epdlogp).ravel()
-  Eigen::VectorXd dW2 = eph * epdlogp;
+  Eigen::VectorXd dW2 = eph.transpose() * epdlogp;
 
   //   dh = np.outer(epdlogp, model['W2'])
   Eigen::MatrixXd dh = epdlogp * W2.transpose();
@@ -19,7 +19,7 @@ std::pair<Eigen::MatrixXd,Eigen::VectorXd> PolicyNetwork::policy_backward(Eigen:
   //   dh[eph <= 0] = 0 # backpro prelu
   for(int i = 0; i < dh.rows(); i++)
   {
-    for(int j = 0; j < dh.cols(); i++)
+    for(int j = 0; j < dh.cols(); j++)
     {
       dh(i,j) = dh(i,j) < 0.0 ? 0.0:dh(i,j); // ReLu
     }
@@ -58,7 +58,7 @@ std::pair<double,Eigen::VectorXd> PolicyNetwork::policy_forward(Eigen::VectorXd 
 PolicyNetwork::PolicyNetwork()
 {
   // hyperparameters:
-  int nHidden = 200;
+  int nHidden = 10;
   int batch_size = 10;
   double learning_rate = 1e-4;
   double gamma = 0.99;
@@ -70,7 +70,7 @@ void PolicyNetwork::initialize()
 {
   // input dimensionality:
   int D = 20*20;
-  int H = 200;
+  int H = nHidden;
 
   // TODO: add xavier initialization instead of zeros
   W1 = Eigen::MatrixXd::Zero(H,D);

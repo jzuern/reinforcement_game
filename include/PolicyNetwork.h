@@ -12,7 +12,7 @@ class PolicyNetwork
 		PolicyNetwork(); 
 		void initialize();
 		
-		std::pair<Eigen::MatrixXd,Eigen::VectorXd> policy_backward(Eigen::VectorXd eph, 
+		std::pair<Eigen::MatrixXd,Eigen::VectorXd> policy_backward(Eigen::MatrixXd eph,
 				Eigen::VectorXd epdlogp, Eigen::MatrixXd epx);
 		
 		std::pair<double,Eigen::VectorXd> policy_forward(Eigen::VectorXd x);

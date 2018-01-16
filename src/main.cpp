@@ -86,6 +86,8 @@ int main(int argc, char **argv)
     pn.initialize();
 
     int D = 20*20;
+    int H = pn.nHidden;
+
 
     Eigen::VectorXd prev_x = Eigen::VectorXd::Zero(D); // used in computing the difference frame
     std::vector<Eigen::VectorXd> xs,hs;
@@ -152,8 +154,6 @@ int main(int argc, char **argv)
 
         bool done = ((counter % 10 == 0) && (counter > 0));
 
-        int D = 20*20;
-        int H = 200;
 
         //   cur_x = prepro()
         auto cur_x = pn.prepro();
@@ -189,14 +189,13 @@ int main(int argc, char **argv)
         
         //  dlogps.append(y - aprob) # grad that encourages the action that was taken to be taken (see http://cs231n.github.io/neural-networks-2/#losses if confused)
         dlogps.push_back(y - aprob);
+
         //  step the environment and get new measurements
         //  observation, reward, done = step(action,counter)
-        Eigen::MatrixXd observarion = step(); // TODO: add correct arguments
-        
+        Eigen::MatrixXd observation = step(); // TODO: add correct arguments
 
-        double reward = 1.0;
+        double reward = 1.0; // TODO: remove hardcoded reward
 
-        //  reward_sum += reward
         reward_sum += reward;
         //  drs.append(reward) # record reward (has to be done after we call step() to get reward for previous action)
         drs.push_back(reward);

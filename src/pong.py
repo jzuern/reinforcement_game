@@ -38,6 +38,9 @@ def discount_rewards(r):
 
 def policy_forward(x):
   h = np.dot(model['W1'], x)
+
+  print 'W1 shape = ', model['W1'].shape
+
   h[h<0] = 0 # ReLU nonlinearity
   logp = np.dot(model['W2'], h)
   p = sigmoid(logp)
@@ -71,7 +74,7 @@ xs,hs,dlogps,drs = [],[],[],[]
 running_reward = None
 reward_sum = 0
 episode_number = 0
-counter = 0
+counter = 1
 
 while True:
 
@@ -82,6 +85,12 @@ while True:
 
   # forward the policy network and sample an action from the returned probability
   aprob, h = policy_forward(x)
+
+  print 'aprob shape = ', aprob.shape
+  print 'h shape = ', h.shape
+  print 'x shape = ', x.shape
+
+
   action = 2 if np.random.uniform() < aprob else 3 # roll the dice!
 
   # record various intermediates (needed later for backprop)
@@ -90,9 +99,7 @@ while True:
   y = 1 if action == 2 else 0 # a "fake label"
   dlogps.append(y - aprob) # grad that encourages the action that was taken to be taken (see http://cs231n.github.io/neural-networks-2/#losses if confused)
 
-  print 'dlogps type = ', type(dlogps)
-  print 'aprob type = ', type(aprob)
-  print 'h shape = ', h.shape
+
 
   # step the environment and get new measurements
   observation, reward, done = step(action,counter)
@@ -111,7 +118,10 @@ while True:
 
     print 'epdlogp type = ', type(epdlogp)
     print 'epdlogp shape = ', epdlogp.shape
-
+    print 'dlogps type = ', type(dlogps)
+    print 'aprob type = ', type(aprob)
+    print 'h shape = ', h.shape
+    print 'hs type = ', type(hs), 'hs length = ', len(hs)
 
 
     xs,hs,dlogps,drs = [],[],[],[] # reset array memory
@@ -126,6 +136,12 @@ while True:
     discounted_epr /= np.std(discounted_epr)
 
     epdlogp *= discounted_epr # modulate the gradient with advantage (PG magic happens right here.)
+
+    print 'eph.shape = ', eph.shape
+    print 'epdlogp.shape = ', epdlogp.shape
+    print 'discounted_epr.shape = ', discounted_epr.shape
+
+
     grad = policy_backward(eph, epdlogp)
     for k in model: grad_buffer[k] += grad[k] # accumulate grad over batch
 
@@ -144,7 +160,7 @@ while True:
     prev_x = None
     time.sleep(1)
 
-  # if reward != 0: # Pong has either +1 or -1 reward exactly when game ends.
-    # print ('ep %d: game finished, reward: %f' % (episode_number, reward)) + ('' if reward == -1 else ' !!!!!!!!')
+    if reward != 0: # Pong has either +1 or -1 reward exactly when game ends.
+      print ('ep %d: game finished, reward: %f' % (episode_number, reward)) + ('' if reward == -1 else ' !!!!!!!!')
 
   counter += 1
