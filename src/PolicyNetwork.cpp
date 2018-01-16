@@ -57,12 +57,11 @@ std::pair<double,Eigen::VectorXd> PolicyNetwork::policy_forward(Eigen::VectorXd 
 
 PolicyNetwork::PolicyNetwork()
 {
-  // hyperparameters:
-  int nHidden = 10;
-  int batch_size = 10;
-  double learning_rate = 1e-4;
-  double gamma = 0.99;
-  double decay_rate = 0.99;
+    nHidden = 10;
+    batch_size = 10;
+    learning_rate = 1e-4;
+    gamma = 0.99;
+    decay_rate = 0.99;
 }
 
 

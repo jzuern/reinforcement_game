@@ -26,15 +26,21 @@ Eigen::MatrixXd stack( std::vector<Eigen::VectorXd> xs)
     // Eigen::Map<Eigen::MatrixXd> result(ptr, nEntries*entries_per_vector);
 
     Eigen::MatrixXd result = Eigen::MatrixXd::Zero(nEntries,entries_per_vector);
-
-    // test MatrixXd content
-    for(int i = 0; i < result.rows(); i++)
+    for(int i = 0; i < nEntries; i++)
     {
-        for(int j = 0; j < result.rows(); j++)
+        for(int j = 0; j < entries_per_vector; j++)
         {
-            printf("matrix entry = %f", result(i,j));
+            result(i,j) = xs[i](j);
         }
     }
+    // test MatrixXd content
+//    for(int i = 0; i < result.rows(); i++)
+//    {
+//        for(int j = 0; j < result.rows(); j++)
+//        {
+//            printf("matrix entry = %f", result(i,j));
+//        }
+//    }
     return result;
 }
 
@@ -171,7 +177,12 @@ int main(int argc, char **argv)
         Eigen::VectorXd h = aprob_and_h.second;
         
         // action = 2 if np.random.uniform() < aprob else 3 # roll the dice!
-        int action = 2; // TODO: replace
+        float rand_float = static_cast<float> (rand()) / static_cast<float> (RAND_MAX);
+        int action = 3;
+        if (rand_float < aprob)
+        {
+            action = 2;
+        }
 
         //  xs.append(x) # observation
         xs.push_back(x);
@@ -202,6 +213,7 @@ int main(int argc, char **argv)
 
         if(done) // episode finished
         {
+            printf("episode finished\n");
             episode_number += 1;
 
             // stack together all inputs, hidden states, action gradients, and rewards for this episode
@@ -258,13 +270,13 @@ int main(int argc, char **argv)
                 auto g_W1 = pn.grad_buffer_W1;
                 pn.rmsprop_cache_W1 = pn.decay_rate * pn.rmsprop_cache_W1 + (1.0-pn.decay_rate)* g_W1.cwiseProduct(g_W1);
                 pn.W1 = pn.learning_rate * g_W1.array() / (pn.rmsprop_cache_W1.array().sqrt() + 1e-5);
-                pn.grad_buffer_W1 = Eigen::VectorXd::Zero(H,D);
+                pn.grad_buffer_W1 = Eigen::MatrixXd::Zero(H,D); // reset W1 buffer
 
                 // // W2:
                 auto g_W2 = pn.grad_buffer_W2;
                 pn.rmsprop_cache_W2 = pn.decay_rate * pn.rmsprop_cache_W2 + (1.0-pn.decay_rate)* g_W2.cwiseProduct(g_W2);
                 pn.W2 = pn.learning_rate * g_W2.array() / (pn.rmsprop_cache_W2.array().sqrt() + 1e-5);
-                pn.grad_buffer_W2 = Eigen::VectorXd::Zero(H);
+                pn.grad_buffer_W2 = Eigen::VectorXd::Zero(H); // reset W2 buffer
             }
 
 
