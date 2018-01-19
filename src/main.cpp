@@ -4,6 +4,7 @@
 #include "SimulatedDisk.h"
 #include "Controller.h"
 #include "PolicyNetwork.h"
+#include <unistd.h>
 
 
 
@@ -20,10 +21,8 @@ Eigen::MatrixXd stack( std::vector<Eigen::VectorXd> xs)
     // TODO: implement correct body
     // stacks elements of std::vector<Eigen::VectorXd> to MatrixXd
 
-    // double* ptr = &xs[0];
     int nEntries = xs.size();
     int entries_per_vector = xs[0].rows();
-    // Eigen::Map<Eigen::MatrixXd> result(ptr, nEntries*entries_per_vector);
 
     Eigen::MatrixXd result = Eigen::MatrixXd::Zero(nEntries,entries_per_vector);
     for(int i = 0; i < nEntries; i++)
@@ -33,14 +32,6 @@ Eigen::MatrixXd stack( std::vector<Eigen::VectorXd> xs)
             result(i,j) = xs[i](j);
         }
     }
-    // test MatrixXd content
-//    for(int i = 0; i < result.rows(); i++)
-//    {
-//        for(int j = 0; j < result.rows(); j++)
-//        {
-//            printf("matrix entry = %f", result(i,j));
-//        }
-//    }
     return result;
 }
 
@@ -54,6 +45,17 @@ Eigen::VectorXd stack_vector( std::vector<double> x)
 }
 
 
+Eigen::MatrixXd prepro(sf::RenderWindow &window)
+{
+    // TODO: implement actual content
+
+    sf::Image image = window.capture();
+
+    Eigen::MatrixXd dummy = Eigen::VectorXd::Zero(50*50);
+    return dummy;
+}
+
+
 
 int main(int argc, char **argv)
 {
@@ -61,29 +63,26 @@ int main(int argc, char **argv)
     // SIMULATION PART
 
     // construct SimulatedDisk objects
-    SimulatedDisk disk1(diskRadius, diskRadius, diskRadius, 50.);
-    SimulatedDisk disk2(diskRadius, diskRadius, diskRadius, 10.);
+    SimulatedDisk disk1(diskRadius, WINSIZEX/2, diskRadius, 10.);
 
     // construct Controller object
     Controller controller(controller_length, controller_height, WINSIZEX/2, WINSIZEY - controller_height/2);
 
     // sf shape primitives
     sf::CircleShape drawDisk1(diskRadius);
-    sf::CircleShape drawDisk2(diskRadius);
     sf::RectangleShape drawController(sf::Vector2f(controller_length,controller_height));
 
     // set the origin of the drawDisk
     drawDisk1.setOrigin(diskRadius, diskRadius);
     drawDisk1.setFillColor(sf::Color::Red);
-    drawDisk2.setOrigin(diskRadius, diskRadius);
-    drawDisk2.setFillColor(sf::Color::Red);
 
     // set the origin of the controllerDisk
     drawController.setOrigin(controller_length/2, controller_height/2);
     drawController.setFillColor(sf::Color::White);
 
     // create RenderWindow object
-//    sf::RenderWindow window(sf::VideoMode(WINSIZEX, WINSIZEY), "Project 0 Simulator");
+    sf::RenderWindow window(sf::VideoMode(WINSIZEX, WINSIZEY), "Project 0 Simulator");
+
 
 
     // POLICYNETWORK PART
@@ -91,7 +90,7 @@ int main(int argc, char **argv)
     PolicyNetwork pn;
     pn.initialize();
 
-    int D = 20*20;
+    int D = 50*50;
     int H = pn.nHidden;
 
 
@@ -105,64 +104,12 @@ int main(int argc, char **argv)
     int counter = 1;
 
     // Simulation loop
-//    while (window.isOpen())
     while (true)
     {
-
-        // SIMULATION part
-
-
-        // check for keyboard events
-
-//        sf::Event event;
-//        while (window.pollEvent(event))
-//        {
-//            if (event.type == sf::Event::Closed)
-//                window.close();
-//        }
-//        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-//        {
-//            controller.move(1);
-//        }
-//        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-//        {
-//            controller.move(2);
-//        }
-//
-//        // update disk positions according to gravity and user input
-//        disk1.updatePosition();
-//        disk2.updatePosition();
-//        controller.updatePosition();
-//
-//
-//        // detect collisions between disks and controller
-//        collisionDetect(disk1, controller, diskRadius);
-//        collisionDetect(disk2, controller, diskRadius);
-//
-//
-//        // set new positions of both disks
-//        drawDisk1.setPosition(disk1.getPositionX(), disk1.getPositionY());
-//        drawDisk2.setPosition(disk2.getPositionX(), disk2.getPositionY());
-//        drawController.setPosition(controller.getPositionX(), controller.getPositionY());
-//
-//        // draw and display disks
-//        window.clear();
-//        window.draw(drawDisk1);
-//        window.draw(drawDisk2);
-//        window.draw(drawController);
-//        window.display();
-
-        // auto image = window.capture();
-        // auto image_ptr = image.getPixelsPtr();
-
-
         // POLICYNETWORK part
 
-        bool done = ((counter % 10 == 0) && (counter > 0));
-
-
         //   cur_x = prepro()
-        auto cur_x = pn.prepro();
+        auto cur_x = prepro(window);
 
         // x = cur_x - prev_x if prev_x is not None else np.zeros(D)
         auto x = cur_x - prev_x;
@@ -178,10 +125,10 @@ int main(int argc, char **argv)
         
         // action = 2 if np.random.uniform() < aprob else 3 # roll the dice!
         float rand_float = static_cast<float> (rand()) / static_cast<float> (RAND_MAX);
-        int action = 3;
+        int action = 2;
         if (rand_float < aprob)
         {
-            action = 2;
+            action = 1;
         }
 
         //  xs.append(x) # observation
@@ -190,9 +137,9 @@ int main(int argc, char **argv)
         hs.push_back(h);
         //  y = 1 if action == 2 else 0 # a "fake label"
         int y;
-        if (action == 2)
+        if (action == 1)
         {
-            y = 2;
+            y = 1;
         } else
         {
             y = 0;
@@ -205,13 +152,52 @@ int main(int argc, char **argv)
         //  observation, reward, done = step(action,counter)
         Eigen::MatrixXd observation = step(); // TODO: add correct arguments
 
-        double reward = 1.0; // TODO: remove hardcoded reward
+
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+//        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+        if (action == 1)
+        {
+            controller.move(1);
+        }
+//        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+        else if (action == 2)
+        {
+            controller.move(2);
+        }
+
+        // update disk positions according to gravity and user input
+        bool disk1_oob = disk1.updatePosition();
+
+        controller.updatePosition();
+
+        // detect collisions between disks and controller
+        collisionDetect(disk1, controller, diskRadius);
+
+        // set new positions of both disks
+        drawDisk1.setPosition(disk1.getPositionX(), disk1.getPositionY());
+        drawController.setPosition(controller.getPositionX(), controller.getPositionY());
+
+        // draw and display disks
+        window.clear();
+        window.draw(drawDisk1);
+        window.draw(drawController);
+        window.display();
+
+        usleep(100000);
+
+
+        double reward = -1.0; // TODO: remove hardcoded reward
 
         reward_sum += reward;
         //  drs.append(reward) # record reward (has to be done after we call step() to get reward for previous action)
         drs.push_back(reward);
 
-        if(done) // episode finished
+        if(disk1_oob) // episode finished
         {
             printf("episode finished\n");
             episode_number += 1;
@@ -295,10 +281,15 @@ int main(int argc, char **argv)
 
             // prev_x = None
             prev_x = Eigen::VectorXd::Zero(D);
+
+
+            disk1.setPosition(diskRadius, diskRadius); // reset disk position
+            controller.setPosition(WINSIZEX/2, WINSIZEY - controller_height/2); // reset controller position
+            usleep(1000000);
+
         }
         counter += 1;
 
     }
 
-    return 0;
 }

@@ -1,4 +1,8 @@
 build/CMakeFiles/
 build/CMakeCache.txt
 build/project0
+cmake-build-debug
+cmake_modules
+.git
+.idea
 

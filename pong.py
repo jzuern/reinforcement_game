@@ -1,18 +1,17 @@
 """ Trains an agent with (stochastic) Policy Gradients on Pong. Uses OpenAI Gym. """
 import numpy as np
-import cPickle as pickle
-import time
+import gym
 
 # hyperparameters
-H = 10 # number of hidden layer neurons
+H = 200 # number of hidden layer neurons
 batch_size = 10 # every how many episodes to do a param update?
 learning_rate = 1e-4
 gamma = 0.99 # discount factor for reward
 decay_rate = 0.99 # decay factor for RMSProp leaky sum of grad^2
-render = False
+render = True
 
 # model initialization
-D = 20 * 20 # input dimensionality: 20*20 grid
+D = 80 * 80 # input dimensionality: 80x80 grid
 model = {}
 model['W1'] = np.random.randn(H,D) / np.sqrt(D) # "Xavier" initialization
 model['W2'] = np.random.randn(H) / np.sqrt(H)
@@ -23,8 +22,14 @@ rmsprop_cache = { k : np.zeros_like(v) for k,v in model.iteritems() } # rmsprop 
 def sigmoid(x): 
   return 1.0 / (1.0 + np.exp(-x)) # sigmoid "squashing" function to interval [0,1]
 
-def prepro():
-  return np.zeros((20,20),dtype=np.float32).ravel()
+def prepro(I):
+  """ prepro 210x160x3 uint8 frame into 6400 (80x80) 1D float vector """
+  I = I[35:195] # crop
+  I = I[::2,::2,0] # downsample by factor of 2
+  I[I == 144] = 0 # erase background (background type 1)
+  I[I == 109] = 0 # erase background (background type 2)
+  I[I != 0] = 1 # everything else (paddles, ball) just set to 1
+  return I.astype(np.float).ravel()
 
 def discount_rewards(r):
   """ take 1D float array of rewards and compute discounted reward """
@@ -38,9 +43,6 @@ def discount_rewards(r):
 
 def policy_forward(x):
   h = np.dot(model['W1'], x)
-
-  print 'W1 shape = ', model['W1'].shape
-
   h[h<0] = 0 # ReLU nonlinearity
   logp = np.dot(model['W2'], h)
   p = sigmoid(logp)
@@ -52,45 +54,25 @@ def policy_backward(eph, epdlogp):
   dh = np.outer(epdlogp, model['W2'])
   dh[eph <= 0] = 0 # backpro prelu
   dW1 = np.dot(dh.T, epx)
-
-  print 'dh.T shape = ', dh.T.shape
-  print 'epx shape = ', epx.shape
-
-  print 'dW1 shape = ', dW1.shape
-  print 'dW2 shape = ', dW2.shape
-
   return {'W1':dW1, 'W2':dW2}
 
-def step(action,counter):
-
-  done = counter % 10 == 0
-  observation = np.zeros((80,80),dtype=np.float32).ravel()
-  reward = 1.0
-
-  return observation, reward, done
-
+env = gym.make("Pong-v0")
+observation = env.reset()
 prev_x = None # used in computing the difference frame
 xs,hs,dlogps,drs = [],[],[],[]
 running_reward = None
 reward_sum = 0
 episode_number = 0
-counter = 1
-
 while True:
+  if render: env.render()
 
   # preprocess the observation, set input to network to be difference image
-  cur_x = prepro()
+  cur_x = prepro(observation)
   x = cur_x - prev_x if prev_x is not None else np.zeros(D)
   prev_x = cur_x
 
   # forward the policy network and sample an action from the returned probability
   aprob, h = policy_forward(x)
-
-  print 'aprob shape = ', aprob.shape
-  print 'h shape = ', h.shape
-  print 'x shape = ', x.shape
-
-
   action = 2 if np.random.uniform() < aprob else 3 # roll the dice!
 
   # record various intermediates (needed later for backprop)
@@ -99,10 +81,8 @@ while True:
   y = 1 if action == 2 else 0 # a "fake label"
   dlogps.append(y - aprob) # grad that encourages the action that was taken to be taken (see http://cs231n.github.io/neural-networks-2/#losses if confused)
 
-
-
   # step the environment and get new measurements
-  observation, reward, done = step(action,counter)
+  observation, reward, done, info = env.step(action)
   reward_sum += reward
 
   drs.append(reward) # record reward (has to be done after we call step() to get reward for previous action)
@@ -115,33 +95,15 @@ while True:
     eph = np.vstack(hs)
     epdlogp = np.vstack(dlogps)
     epr = np.vstack(drs)
-
-    print 'epdlogp type = ', type(epdlogp)
-    print 'epdlogp shape = ', epdlogp.shape
-    print 'dlogps type = ', type(dlogps)
-    print 'aprob type = ', type(aprob)
-    print 'h shape = ', h.shape
-    print 'hs type = ', type(hs), 'hs length = ', len(hs)
-
-
     xs,hs,dlogps,drs = [],[],[],[] # reset array memory
 
     # compute the discounted reward backwards through time
     discounted_epr = discount_rewards(epr)
-
-    print 'discounted_epr.shape = ', discounted_epr.shape
-    
     # standardize the rewards to be unit normal (helps control the gradient estimator variance)
     discounted_epr -= np.mean(discounted_epr)
     discounted_epr /= np.std(discounted_epr)
 
     epdlogp *= discounted_epr # modulate the gradient with advantage (PG magic happens right here.)
-
-    print 'eph.shape = ', eph.shape
-    print 'epdlogp.shape = ', epdlogp.shape
-    print 'discounted_epr.shape = ', discounted_epr.shape
-
-
     grad = policy_backward(eph, epdlogp)
     for k in model: grad_buffer[k] += grad[k] # accumulate grad over batch
 
@@ -155,12 +117,11 @@ while True:
 
     # boring book-keeping
     running_reward = reward_sum if running_reward is None else running_reward * 0.99 + reward_sum * 0.01
-    print 'resetting env. episode reward total was %f. running mean: %f' % (reward_sum, running_reward)
+    print( 'resetting env. episode reward total was %f. running mean: %f' % (reward_sum, running_reward))
+    if episode_number % 100 == 0: pickle.dump(model, open('save.p', 'wb'))
     reward_sum = 0
+    observation = env.reset() # reset env
     prev_x = None
-    time.sleep(1)
 
-    if reward != 0: # Pong has either +1 or -1 reward exactly when game ends.
-      print ('ep %d: game finished, reward: %f' % (episode_number, reward)) + ('' if reward == -1 else ' !!!!!!!!')
-
-  counter += 1
+  if reward != 0: # Pong has either +1 or -1 reward exactly when game ends.
+    print ('ep %d: game finished, reward: %f' % (episode_number, reward)) + ('' if reward == -1 else ' !!!!!!!!')

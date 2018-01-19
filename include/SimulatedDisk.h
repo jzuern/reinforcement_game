@@ -6,7 +6,7 @@ class SimulatedDisk
 {
 	public:
 		SimulatedDisk(float radius, float x, float y, float x_vel); 
-		void updatePosition();
+		bool updatePosition();
 		void setVelocity(float x_vel, float y_vel);
 		void setPosition(float x, float y);
 		float getPositionX();

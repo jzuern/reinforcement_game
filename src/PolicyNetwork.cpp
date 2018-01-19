@@ -26,7 +26,7 @@ std::pair<Eigen::MatrixXd,Eigen::VectorXd> PolicyNetwork::policy_backward(Eigen:
   }
 
   //   dW1 = np.dot(dh.T, epx)
-  Eigen::MatrixXd dW1 = dh * epx;
+  Eigen::MatrixXd dW1 = dh.transpose() * epx;
 
   //   return {'W1':dW1, 'W2':dW2}
   return std::make_pair (dW1, dW2); 
@@ -68,7 +68,7 @@ PolicyNetwork::PolicyNetwork()
 void PolicyNetwork::initialize()
 {
   // input dimensionality:
-  int D = 20*20;
+  int D = 50*50;
   int H = nHidden;
 
   // TODO: add xavier initialization instead of zeros
@@ -82,13 +82,6 @@ void PolicyNetwork::initialize()
   rmsprop_cache_W2 = Eigen::VectorXd::Zero(H);
 }
 
-Eigen::MatrixXd PolicyNetwork::prepro()
-{
-  // TODO: implement actual content
-
-  Eigen::MatrixXd dummy = Eigen::VectorXd::Zero(20*20);
-  return dummy;
-}
 
 
 Eigen::VectorXd PolicyNetwork::discount_rewards(Eigen::VectorXd r)
