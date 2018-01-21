@@ -1,5 +1,6 @@
+#include <iostream>
 #include "PolicyNetwork.h"
-#include <math.h> 
+//#include <math.h>
 
 double sigmoid(double x)
 {
@@ -27,6 +28,16 @@ std::pair<Eigen::MatrixXd,Eigen::VectorXd> PolicyNetwork::policy_backward(Eigen:
 
   //   dW1 = np.dot(dh.T, epx)
   Eigen::MatrixXd dW1 = dh.transpose() * epx;
+
+//    Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "[", "]");
+//    printf("dW1:\n");
+//    std::cout << dW1.format(CleanFmt);
+//    printf("\ndW2:\n");
+//    std::cout << dW2.format(CleanFmt);
+//    printf("\neph:\n");
+//    std::cout << eph.format(CleanFmt);
+//    printf("\nepdlogp:\n");
+//    std::cout << epdlogp.format(CleanFmt);
 
   //   return {'W1':dW1, 'W2':dW2}
   return std::make_pair (dW1, dW2); 

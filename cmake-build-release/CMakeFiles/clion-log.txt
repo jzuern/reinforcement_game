@@ -1,0 +1,5 @@
+/home/jannik/clion-2017.3.1/bin/cmake/bin/cmake -DCMAKE_BUILD_TYPE=Release -G "CodeBlocks - Unix Makefiles" /home/jannik/Desktop/project_0
+-- Found SFML 2.3.2 in /usr/include
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/jannik/Desktop/project_0/cmake-build-release

@@ -5,7 +5,7 @@
 
 
 
-Controller::Controller(float length, float height, float x, float y)
+Controller::Controller(double length, double height, double x, double y)
 {
 	length_ = length;
 	height_ = height;
@@ -34,33 +34,33 @@ void Controller::updatePosition()
 
 }
 
-void Controller::setPosition(float x, float y)
+void Controller::setPosition(double x, double y)
 {
 	centerPositionX = x;
 	centerPositionY = y;
 }
 
-float Controller::getPositionX()
+double Controller::getPositionX()
 {
 	return centerPositionX;
 }
 
-float Controller::getPositionY()
+double Controller::getPositionY()
 {
 	return centerPositionY;
 }
 
-float Controller::getVelX()
+double Controller::getVelX()
 {
 	return linear_velocity_x;
 }
 
-float Controller::getVelY()
+double Controller::getVelY()
 {
 	return linear_velocity_y;
 }
 
-void Controller::setVelocity(float x_vel, float y_vel)
+void Controller::setVelocity(double x_vel, double y_vel)
 {
 	linear_velocity_x = x_vel;
 	linear_velocity_y = y_vel;
@@ -69,18 +69,18 @@ void Controller::setVelocity(float x_vel, float y_vel)
 
 void Controller::move(int direction)
 {
-	float centerPositionX_old = centerPositionX;
+	double centerPositionX_old = centerPositionX;
 
 	switch(direction)
 	{
 	    case 1: 
 	    {
-	    	centerPositionX -= 0.1;  // Left
+	    	centerPositionX -= 1.0;  // Left
 	    }
 	    break;
 	    case 2:
 	    {
-	    	centerPositionX += 0.1;  // Right
+	    	centerPositionX += 1.0;  // Right
 	    }
 	    break;
 	}

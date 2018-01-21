@@ -5,22 +5,22 @@
 class SimulatedDisk
 {
 	public:
-		SimulatedDisk(float radius, float x, float y, float x_vel); 
+		SimulatedDisk(double radius, double x, double y);
 		bool updatePosition();
-		void setVelocity(float x_vel, float y_vel);
-		void setPosition(float x, float y);
-		float getPositionX();
-		float getPositionY();
-		float getVelX();
-		float getVelY();
+		void setVelocity(double x_vel, double y_vel);
+		void setPosition(double x, double y);
+        double getPositionX();
+        double getPositionY();
+        double getVelX();
+        double getVelY();
 		
 	private:
 		float radius_;
 
-		float centerPositionX;
-		float centerPositionY;
-		float linear_velocity_y;
-		float linear_velocity_x;
+        double centerPositionX;
+        double centerPositionY;
+        double linear_velocity_y;
+        double linear_velocity_x;
 };
 
 

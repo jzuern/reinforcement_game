@@ -1,9 +1,8 @@
 #ifndef POLICYNETWORK_H
 #define POLICYNETWORK_H
 
-#include <Eigen/Dense> // eigen library for matrix vector stuff
 #include <random>
-
+#include <Eigen/Dense> // eigen library for matrix vector stuff
 
 
 class PolicyNetwork
@@ -15,14 +14,9 @@ class PolicyNetwork
 		std::pair<Eigen::MatrixXd,Eigen::VectorXd> policy_backward(Eigen::MatrixXd eph,
 				Eigen::VectorXd epdlogp, Eigen::MatrixXd epx);
 		
-		std::pair<double,Eigen::VectorXd> policy_forward(Eigen::VectorXd x);
-		
-		Eigen::MatrixXd prepro();
+		std::pair<double, Eigen::VectorXd> policy_forward(Eigen::VectorXd x);
 		
 		Eigen::VectorXd discount_rewards(Eigen::VectorXd r);
-
-
-
 
 		Eigen::MatrixXd W1;
 		Eigen::VectorXd W2;

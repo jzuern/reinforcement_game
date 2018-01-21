@@ -5,8 +5,8 @@
 #define WINSIZEY 50
 
 
-//const float gravity = 9.81;
-const float gravity = 0.0;
+const float gravity = 2.0;
+//const float gravity = 0.0;
 const float delta_t = 0.1;
 
 const float diskRadius = 5.0;

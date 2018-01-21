@@ -6,24 +6,24 @@
 class Controller
 {
 	public:
-		Controller(float length, float height, float x, float y); 
+		Controller(double length, double height, double x, double y);
 		void updatePosition();
-		void setPosition(float x, float y);
-		void setVelocity(float x_vel, float y_vel);
-		float getPositionX();
-		float getPositionY();
+		void setPosition(double x, double y);
+		void setVelocity(double x_vel, double y_vel);
+		double getPositionX();
+		double getPositionY();
 		void move(int direction);
-		float getVelX();
-		float getVelY();
+		double getVelX();
+		double getVelY();
 
 	private:
-		float length_;
-		float height_;
+		double length_;
+		double height_;
 
-		float centerPositionX;
-		float centerPositionY;
-		float linear_velocity_y;
-		float linear_velocity_x;
+		double centerPositionX;
+		double centerPositionY;
+		double linear_velocity_y;
+		double linear_velocity_x;
 
 };
 

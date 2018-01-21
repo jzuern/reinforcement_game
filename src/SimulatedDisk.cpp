@@ -1,34 +1,30 @@
 #include "SimulatedDisk.h"
 #include "defines.h"
 
-#include <stdio.h>
 
-
-
-SimulatedDisk::SimulatedDisk(float radius, float x, float y, float x_vel)
+SimulatedDisk::SimulatedDisk(double radius, double x, double y)
 {
 	radius_ = radius;
-	linear_velocity_y = x_vel;
-	linear_velocity_x = x_vel;
+	linear_velocity_y = 0.0;
+	linear_velocity_x = 0.0;
 	centerPositionX = x;
 	centerPositionY = y;
-
 }
 
 bool SimulatedDisk::updatePosition()
 {
 	bool out_of_bounds = false;
 
-	float delta_velocity_y = gravity * delta_t;
+    double delta_velocity_y = gravity * delta_t;
 	linear_velocity_y += delta_velocity_y;
 
-	float delta_velocity_x = 0.0;
+    double delta_velocity_x = 0.0;
 	linear_velocity_x += delta_velocity_x;
 
-	float delta_pos_y = linear_velocity_y * delta_t;
-	float delta_pos_x = linear_velocity_x * delta_t;
+    double delta_pos_y = linear_velocity_y * delta_t;
+    double delta_pos_x = linear_velocity_x * delta_t;
 
-	float bounce = 1.0;
+    double bounce = 1.0;
 
 	centerPositionY += delta_pos_y;
 	centerPositionX += delta_pos_x;
@@ -41,10 +37,6 @@ bool SimulatedDisk::updatePosition()
 		// if this happens, remove disk from game
 		out_of_bounds = true;
 
-//		centerPositionX = -100.;
-//		centerPositionY = -100.;
-//		linear_velocity_y = 0.;
-//		linear_velocity_y = 0.;
 	}
 
 	if(centerPositionY-radius_ < 0)
@@ -69,34 +61,34 @@ bool SimulatedDisk::updatePosition()
 	return out_of_bounds;
 }
 
-void SimulatedDisk::setPosition(float x, float y)
+void SimulatedDisk::setPosition(double x, double y)
 {
 	centerPositionX = x;
 	centerPositionY = y;
 }
 
-void SimulatedDisk::setVelocity(float x_vel, float y_vel)
+void SimulatedDisk::setVelocity(double x_vel, double y_vel)
 {
 	linear_velocity_x = x_vel;
 	linear_velocity_y = y_vel;
 }
 
-float SimulatedDisk::getPositionX()
+double SimulatedDisk::getPositionX()
 {
 	return centerPositionX;
 }
 
-float SimulatedDisk::getPositionY()
+double SimulatedDisk::getPositionY()
 {
 	return centerPositionY;
 }
 
-float SimulatedDisk::getVelX()
+double SimulatedDisk::getVelX()
 {
 	return linear_velocity_x;
 }
 
-float SimulatedDisk::getVelY()
+double SimulatedDisk::getVelY()
 {
 	return linear_velocity_y;
 }
