@@ -47,10 +47,19 @@ int main(int argc, char **argv)
 
     // POLICYNETWORK PART
 
-    PolicyNetwork pn;
-    pn.initialize();
+    char* checkpoint_path = argv[1];
 
-    int D = 50*50;
+    PolicyNetwork pn;
+    if(argc == 1)
+    {
+        pn.initialize(checkpoint_path);
+    } else
+    {
+        pn.initialize_zeros();
+    }
+
+
+    int D = WINSIZEX*WINSIZEX;
     int H = pn.nHidden;
 
 
@@ -68,21 +77,16 @@ int main(int argc, char **argv)
     {
         // POLICYNETWORK part
         clock_t t_start,t_end;
-        t_start=clock();
+        t_start = clock();
 
-
-        //   cur_x = prepro()
         Eigen::VectorXd cur_x = prepro(window);
-
-        // x = cur_x - prev_x if prev_x is not None else np.zeros(D)
         Eigen::VectorXd x = cur_x - prev_x;
 
         // update prev_x
         prev_x = cur_x;
 
-        // aprob, h = policy_forward(x)
+        // forward pass of x
         auto aprob_and_h = pn.policy_forward(x);
-
         double aprob = aprob_and_h.first;
         Eigen::VectorXd h = aprob_and_h.second;
 
@@ -114,7 +118,6 @@ int main(int argc, char **argv)
         //  step the environment and get new measurements
         //  observation, reward, done = step(action,counter)
 
-
         if (action == 1)
         {
             controller.move(1);
@@ -132,16 +135,17 @@ int main(int argc, char **argv)
         // detect collisions between disks and controller
         bool touched = collisionDetect(disk1, controller, diskRadius);
 
-        double reward = -1.0; // TODO: reward okay like that?
-        if(touched) reward = 10.0; // if controller touched ball: give reward!
+        // define reward as squared x-distance between disk and controller:
+        double dist = disk1.getPositionX() - controller.getPositionX();
+//        double reward = 1.0 - (dist*dist) / (WINSIZEX * WINSIZEX);
+        double reward = disk1.getPositionX();
 
         // set new positions of both disks
         drawDisk1.setPosition(disk1.getPositionX(), disk1.getPositionY());
         drawController.setPosition(controller.getPositionX(), controller.getPositionY());
 
-
         // draw and display disks
-        if(episode_number % 100 == 0 && episode_number != 0)
+        if(episode_number % 100 == 0)
         {
             window.clear();
             window.draw(drawDisk1);
@@ -183,16 +187,11 @@ int main(int argc, char **argv)
             Eigen::VectorXd discounted_epr = pn.discount_rewards(epr);
 
             // # standardize the rewards to be unit normal (helps control the gradient estimator variance)
-            // discounted_epr -= np.mean(discounted_epr)
-            // discounted_epr /= np.std(discounted_epr)
             double mean = discounted_epr.mean();
             double stddev = std_dev(discounted_epr, mean);
 
-//            Eigen::VectorXd discounted_epr_mean = discounted_epr.array() - mean;
-//            Eigen::VectorXd discounted_epr_mean_stddev = discounted_epr_mean.array() / stddev;
-            auto discounted_epr_mean_stddev = discounted_epr;
-
-            // TODO: add also standard deviation normalization
+            Eigen::VectorXd discounted_epr_mean = discounted_epr.array() - mean;
+            Eigen::VectorXd discounted_epr_mean_stddev = discounted_epr_mean.array() / stddev;
 
             // epdlogp *= discounted_epr # modulate the gradient with advantage (PG magic happens right here.)
             Eigen::VectorXd epdlogp_discounted = epdlogp.array() * discounted_epr_mean_stddev.array();
@@ -236,8 +235,15 @@ int main(int argc, char **argv)
                 t_end = clock();
                 float diff = ((float)t_end-(float)t_start) / CLOCKS_PER_SEC;
                 t_start = clock();
+                printf("episode %i finished.\n", episode_number);
+
                 printf("      time per batch = %f.\n", diff);
 
+                if(episode_number % 10*pn.batch_size == 0)
+                {
+                    write_binary("/home/jannik/Desktop/project_0/checkpoints/w1", pn.W1);
+                    write_binary("/home/jannik/Desktop/project_0/checkpoints/w2", pn.W2);
+                }
             }
 
 
@@ -263,12 +269,9 @@ int main(int argc, char **argv)
 
             controller.setPosition(controller_x_pos,controller_y_pos); // reset controller position
 
-            printf("episode %i finished.\n", episode_number);
-
 
         }
         counter += 1;
 
     }
-
 }

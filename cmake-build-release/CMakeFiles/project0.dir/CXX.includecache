@@ -15,6 +15,8 @@ random
 -
 Eigen/Dense
 -
+defines.h
+../include/defines.h
 
 ../include/SimulatedDisk.h
 
@@ -32,6 +34,8 @@ math.h
 cstdlib
 -
 iostream
+-
+fstream
 -
 Eigen/Dense
 -

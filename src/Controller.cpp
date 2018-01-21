@@ -50,23 +50,6 @@ double Controller::getPositionY()
 	return centerPositionY;
 }
 
-double Controller::getVelX()
-{
-	return linear_velocity_x;
-}
-
-double Controller::getVelY()
-{
-	return linear_velocity_y;
-}
-
-void Controller::setVelocity(double x_vel, double y_vel)
-{
-	linear_velocity_x = x_vel;
-	linear_velocity_y = y_vel;
-}
-
-
 void Controller::move(int direction)
 {
 	double centerPositionX_old = centerPositionX;
@@ -75,12 +58,12 @@ void Controller::move(int direction)
 	{
 	    case 1: 
 	    {
-	    	centerPositionX -= 1.0;  // Left
+	    	centerPositionX -= 0.5;  // Left
 	    }
 	    break;
 	    case 2:
 	    {
-	    	centerPositionX += 1.0;  // Right
+	    	centerPositionX += 0.5;  // Right
 	    }
 	    break;
 	}

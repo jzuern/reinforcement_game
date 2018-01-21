@@ -1,13 +1,13 @@
 #include <iostream>
 #include "PolicyNetwork.h"
-//#include <math.h>
 
 double sigmoid(double x)
 {
   return 1.0 / (1.0 + exp(-x));
 }
 
-std::pair<Eigen::MatrixXd,Eigen::VectorXd> PolicyNetwork::policy_backward(Eigen::MatrixXd eph, Eigen::VectorXd epdlogp, Eigen::MatrixXd epx)
+std::pair<Eigen::MatrixXd,Eigen::VectorXd> PolicyNetwork::policy_backward(
+        Eigen::MatrixXd &eph, Eigen::VectorXd &epdlogp, Eigen::MatrixXd &epx)
 {
 
   //   """ backward pass. (eph is array of intermediate hidden states) """
@@ -44,7 +44,7 @@ std::pair<Eigen::MatrixXd,Eigen::VectorXd> PolicyNetwork::policy_backward(Eigen:
 }
 
 
-std::pair<double,Eigen::VectorXd> PolicyNetwork::policy_forward(Eigen::VectorXd x)
+std::pair<double,Eigen::VectorXd> PolicyNetwork::policy_forward(Eigen::VectorXd &x)
 {
   //  h = np.dot(model['W1'], x)
   Eigen::VectorXd h = W1 * x;
@@ -68,7 +68,7 @@ std::pair<double,Eigen::VectorXd> PolicyNetwork::policy_forward(Eigen::VectorXd 
 
 PolicyNetwork::PolicyNetwork()
 {
-    nHidden = 10;
+    nHidden = 200;
     batch_size = 10;
     learning_rate = 1e-4;
     gamma = 0.99;
@@ -76,10 +76,12 @@ PolicyNetwork::PolicyNetwork()
 }
 
 
-void PolicyNetwork::initialize()
+void PolicyNetwork::initialize_zeros()
 {
+
+
   // input dimensionality:
-  int D = 50*50;
+  int D = WINSIZEX*WINSIZEX;
   int H = nHidden;
 
   // TODO: add xavier initialization instead of zeros
@@ -95,14 +97,33 @@ void PolicyNetwork::initialize()
 
 
 
-Eigen::VectorXd PolicyNetwork::discount_rewards(Eigen::VectorXd r)
+void PolicyNetwork::initialize(char *filename)
+{
+
+    // input dimensionality:
+    int D = WINSIZEX*WINSIZEX;
+    int H = nHidden;
+
+    // TODO: add xavier initialization instead of zeros
+    W1 = Eigen::MatrixXd::Zero(H,D);
+    W2 = Eigen::VectorXd::Zero(H);
+
+    grad_buffer_W1 = Eigen::MatrixXd::Zero(H,D);
+    grad_buffer_W2 = Eigen::VectorXd::Zero(H);
+
+    rmsprop_cache_W1 = Eigen::MatrixXd::Zero(H,D);
+    rmsprop_cache_W2 = Eigen::VectorXd::Zero(H);
+}
+
+
+Eigen::VectorXd PolicyNetwork::discount_rewards(Eigen::VectorXd &r)
 {
 
   Eigen::VectorXd discounted_r = Eigen::VectorXd::Zero(r.size());
   
   double running_add = 0.0;
 
-  for(int i = r.size()-1; i >= 0; i--)
+  for(long i = r.size()-1; i >= 0; i--)
   {
     if (r(i) != 0.0)
     {

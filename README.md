@@ -1,10 +1,8 @@
 # Codename: Project 0
 
-## Goal
-Balance a ball on a plank with 
+## TODOs:
 
-
-## Dependencies
-- SFML ($ sudo apt-get install sfml)
-
+- load binary weights from disk
+- does it actually learn (eventually)?
+- parallelize (openMP or CUDA)
 

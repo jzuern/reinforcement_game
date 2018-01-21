@@ -3,20 +3,21 @@
 
 #include <random>
 #include <Eigen/Dense> // eigen library for matrix vector stuff
-
+#include "defines.h"
 
 class PolicyNetwork
 {
 	public:
 		PolicyNetwork(); 
-		void initialize();
+		void initialize(char* filename);
+		void initialize_zeros();
+
+		std::pair<Eigen::MatrixXd,Eigen::VectorXd> policy_backward(Eigen::MatrixXd &eph,
+				Eigen::VectorXd &epdlogp, Eigen::MatrixXd &epx);
 		
-		std::pair<Eigen::MatrixXd,Eigen::VectorXd> policy_backward(Eigen::MatrixXd eph,
-				Eigen::VectorXd epdlogp, Eigen::MatrixXd epx);
+		std::pair<double, Eigen::VectorXd> policy_forward(Eigen::VectorXd &x);
 		
-		std::pair<double, Eigen::VectorXd> policy_forward(Eigen::VectorXd x);
-		
-		Eigen::VectorXd discount_rewards(Eigen::VectorXd r);
+		Eigen::VectorXd discount_rewards(Eigen::VectorXd &r);
 
 		Eigen::MatrixXd W1;
 		Eigen::VectorXd W2;
